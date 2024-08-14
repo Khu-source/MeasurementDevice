@@ -1,0 +1,40 @@
+
+//Variables and libraries
+#include <LiquidCrystal.h>
+#define cellPin A1
+float counts = 0;
+float voltage = 0;
+float dist = 0;
+double resolution = 204.60000000;
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+void setup() {
+
+  Serial.begin(9600); 
+  lcd.begin(16,2);
+  lcd.print("Distance: ");
+}
+void loop() {
+//0.75s until refreshing and read in analog input
+  delay(750);
+  counts = analogRead(cellPin);
+  lcd.setCursor(0, 1);
+  
+//Calculate voltage
+  voltage = counts / resolution;
+
+//Apply calibration curve formula
+//dist = (-0.328)*pow(voltage,3)+2.6544*pow(voltage,2)+(-9.054)*voltage+18.62;
+dist = (-0.2672)*pow(voltage,3)+2.2814*pow(voltage,2)+(-8.8593)*voltage+19.244;
+
+
+//Print out readings to serial monitor and LCD screen
+Serial.println(voltage);
+Serial.print("Distance: ");
+Serial.print(dist);
+Serial.println("cm");
+lcd.print(dist);
+lcd.print(" cm");
+
+} 
